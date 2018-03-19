@@ -9,11 +9,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.ColorRes;
-import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -98,10 +95,10 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     public RulerView(Context context) {
         this(context,null);
     }
-    public RulerView(Context context, @Nullable AttributeSet attrs) {
+    public RulerView(Context context, AttributeSet attrs) {
         this(context, attrs,0);
     }
-    public RulerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public RulerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RulerView);
         perWidth=a.getDimension(R.styleable.RulerView_perWidth,SizeUtils.dp2px(context,5));
@@ -303,7 +300,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         return lineColor;
     }
 
-    public void setLineColor(@ColorRes int lineColor) {
+    public void setLineColor( int lineColor) {
         this.lineColor = lineColor;
         invalidate();
     }
@@ -312,7 +309,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         return middleLineColor;
     }
 
-    public void setMiddleLineColor(@ColorRes int middleLineColor) {
+    public void setMiddleLineColor( int middleLineColor) {
         this.middleLineColor = middleLineColor;
         invalidate();
     }
@@ -321,7 +318,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         return textColor;
     }
 
-    public void setTextColor(@ColorRes int textColor) {
+    public void setTextColor( int textColor) {
         this.textColor = textColor;
         invalidate();
     }
