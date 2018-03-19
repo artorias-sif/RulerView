@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -103,14 +104,14 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     public RulerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RulerView);
-        perWidth=a.getDimension(R.styleable.RulerView_perWidth,20);
-        shortHeight =a.getDimension(R.styleable.RulerView_shortHeight,25);
-        longHeight =a.getDimension(R.styleable.RulerView_longHeight,50);
-        middleHeight=a.getDimension(R.styleable.RulerView_middleHeight,75);
-        lineWidth=a.getDimension(R.styleable.RulerView_lineWidth,3);
-        textSize=a.getDimension(R.styleable.RulerView_textSize,30);
-        middleLineWidth=a.getDimension(R.styleable.RulerView_middleLineWidth,3);
-        textMargin=a.getDimension(R.styleable.RulerView_textMargin,40);
+        perWidth=a.getDimension(R.styleable.RulerView_perWidth,SizeUtils.dp2px(context,5));
+        shortHeight =a.getDimension(R.styleable.RulerView_shortHeight,SizeUtils.dp2px(context,5));
+        longHeight =a.getDimension(R.styleable.RulerView_longHeight,SizeUtils.dp2px(context,10));
+        middleHeight=a.getDimension(R.styleable.RulerView_middleHeight,SizeUtils.dp2px(context,15));
+        lineWidth=a.getDimension(R.styleable.RulerView_lineWidth,SizeUtils.dp2px(context,1));
+        textSize=a.getDimension(R.styleable.RulerView_textSize,SizeUtils.sp2px(context,12));
+        middleLineWidth=a.getDimension(R.styleable.RulerView_middleLineWidth,SizeUtils.dp2px(context,1));
+        textMargin=a.getDimension(R.styleable.RulerView_textMargin,SizeUtils.dp2px(context,10));
 
 
         lineColor=a.getColor(R.styleable.RulerView_lineColor,Color.GRAY);
@@ -128,7 +129,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
 
     private void init(){
-        totalWidth=(maxValue-minValue)/spacingValue*perWidth;
+        totalWidth=(maxValue-minValue)*perWidth/spacingValue;
         linePaint=new Paint();
         linePaint.setColor(lineColor);
         linePaint.setStrokeWidth(lineWidth);
@@ -142,6 +143,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         mTextPaint=new TextPaint();
         mTextPaint.setTextSize(textSize);
         mTextPaint.setColor(textColor);
+        mTextPaint.setAntiAlias(true);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
         mPath=new Path();
     }
@@ -194,13 +196,13 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         mPath.moveTo(startX,mHeight);
         mPath.lineTo(startX+totalWidth,mHeight);
         for(float i=minValue;i<=maxValue;i=i+spacingValue){
-            mPath.moveTo(startX+(i-minValue)/spacingValue*perWidth,mHeight);
-            if(i%(spacingValue*longSpacingValue)==0){
-                mPath.lineTo(startX+(i-minValue)/spacingValue*perWidth,mHeight- longHeight);
-                canvas.drawText(String.valueOf((int)i),startX+(i-minValue)/spacingValue*perWidth,
+            mPath.moveTo(startX+(i-minValue)*perWidth/spacingValue,mHeight);
+            if(i%(longSpacingValue)==0){
+                mPath.lineTo(startX+(i-minValue)*perWidth/spacingValue,mHeight- longHeight);
+                canvas.drawText(String.valueOf((int)i),startX+(i-minValue)*perWidth/spacingValue,
                         mHeight- longHeight -textMargin,mTextPaint);
             }else{
-                mPath.lineTo(startX+(i-minValue)/spacingValue*perWidth,mHeight- shortHeight);
+                mPath.lineTo(startX+(i-minValue)*perWidth/spacingValue,mHeight- shortHeight);
             }
         }
         canvas.drawPath(mPath,linePaint);
@@ -301,7 +303,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         return lineColor;
     }
 
-    public void setLineColor(int lineColor) {
+    public void setLineColor(@ColorRes int lineColor) {
         this.lineColor = lineColor;
         invalidate();
     }
@@ -310,7 +312,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         return middleLineColor;
     }
 
-    public void setMiddleLineColor(int middleLineColor) {
+    public void setMiddleLineColor(@ColorRes int middleLineColor) {
         this.middleLineColor = middleLineColor;
         invalidate();
     }
@@ -319,7 +321,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         return textColor;
     }
 
-    public void setTextColor(int textColor) {
+    public void setTextColor(@ColorRes int textColor) {
         this.textColor = textColor;
         invalidate();
     }
@@ -383,12 +385,13 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     }
 
     private void computeCurrentValue(){
-        float floatEnd=(minValue+(mWidth/2-startX)/perWidth);
-        int intEnd=(int)floatEnd;
-        if(floatEnd-intEnd>=0.5f){
-            mCurrentValue=intEnd+1;
+        float a=(minValue+((mWidth/2-startX)/perWidth)*spacingValue);
+        int b=(int)(a/spacingValue);
+        int c=b*(int)spacingValue;
+        if(a-c>=spacingValue/2){
+            mCurrentValue=c+(int)spacingValue;
         }else{
-            mCurrentValue=intEnd;
+            mCurrentValue=c;
         }
     }
 
@@ -402,7 +405,10 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     }
 
     public void scrollTo(int value){
-        float x=startX+value*perWidth;
+        if(value<minValue||value>maxValue){
+            return;
+        }
+        float x=startX+((value-minValue)/spacingValue)*perWidth;
         valueAnimator=null;
         valueAnimator = ValueAnimator.ofFloat(startX, startX-(x-mWidth/2));
         valueAnimator.setInterpolator(new DecelerateInterpolator());
