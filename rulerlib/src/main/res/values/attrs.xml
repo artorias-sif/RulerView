@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RulerView">
+        <!--每个刻度间隔距离-->
+        <attr name="perWidth" format="dimension" />
+        <!--最小值-->
+        <attr name="minValue" format="integer" />
+        <!--最大值-->
+        <attr name="maxValue" format="integer" />
+        <!--每个刻度代表的值-->
+        <attr name="spacingValue" format="integer" />
+        <!--短刻度高度-->
+        <attr name="shortHeight" format="dimension" />
+        <!--长刻度高度-->
+        <attr name="longHeight" format="dimension" />
+        <!--中线高度-->
+        <attr name="middleHeight" format="dimension" />
+        <!--刻度线宽-->
+        <attr name="lineWidth" format="dimension" />
+        <!--文字大小-->
+        <attr name="textSize" format="dimension" />
+        <!--刻度线颜色-->
+        <attr name="lineColor" format="color" />
+        <!--中线颜色-->
+        <attr name="middleLineColor" format="color" />
+        <!--文字颜色-->
+        <attr name="textColor" format="color" />
+        <!--中线宽度-->
+        <attr name="middleLineWidth" format="dimension" />
+        <!--文字与刻度间距-->
+        <attr name="textMargin" format="dimension" />
+        <!--长刻度间隔刻度值-->
+        <attr name="longSpacingValue" format="integer" />
+    </declare-styleable>
+</resources>
