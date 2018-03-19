@@ -36,7 +36,6 @@
         app:lineColor="@android:color/darker_gray"
         app:textSize="12sp"
         app:textMargin="10dp"
-
         />
 
 </LinearLayout>
