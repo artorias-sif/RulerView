@@ -73,6 +73,18 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     //当前值
     private int mCurrentValue;
 
+    //是否显示底线
+    private boolean showBaseLine ;
+
+    public boolean isShowBaseLine() {
+        return showBaseLine;
+    }
+
+    public void setShowBaseLine(boolean showBaseLine) {
+        this.showBaseLine = showBaseLine;
+        invalidate();
+    }
+
     //值变化监听
     private OnValueChangedListener mOnValueChangedListener;
     private ValueAnimator valueAnimator;
@@ -119,30 +131,33 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         maxValue=a.getInt(R.styleable.RulerView_maxValue,100);
         spacingValue=a.getInt(R.styleable.RulerView_spacingValue,1);
         longSpacingValue=a.getInt(R.styleable.RulerView_longSpacingValue,10);
+
+        showBaseLine=a.getBoolean(R.styleable.RulerView_showBaseLine,false);
+
         mGestureDetector=new GestureDetector(context,this);
-        init();
+        mTextPaint=new TextPaint();
+        middlePaint=new Paint();
+        linePaint=new Paint();
+        mPath=new Path();
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setAntiAlias(true);
+        middlePaint.setAntiAlias(true);
+        middlePaint.setStyle(Paint.Style.STROKE);
+        mTextPaint.setAntiAlias(true);
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
+        initData();
         a.recycle();
     }
 
 
-    private void init(){
+    private void initData(){
         totalWidth=(maxValue-minValue)*perWidth/spacingValue;
-        linePaint=new Paint();
         linePaint.setColor(lineColor);
         linePaint.setStrokeWidth(lineWidth);
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setAntiAlias(true);
-        middlePaint=new Paint();
         middlePaint.setColor(middleLineColor);
         middlePaint.setStrokeWidth(middleLineWidth);
-        middlePaint.setAntiAlias(true);
-        middlePaint.setStyle(Paint.Style.STROKE);
-        mTextPaint=new TextPaint();
         mTextPaint.setTextSize(textSize);
         mTextPaint.setColor(textColor);
-        mTextPaint.setAntiAlias(true);
-        mTextPaint.setTextAlign(Paint.Align.CENTER);
-        mPath=new Path();
     }
 
     @Override
@@ -190,8 +205,10 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mPath.reset();
-        mPath.moveTo(startX,mHeight);
-        mPath.lineTo(startX+totalWidth,mHeight);
+        if(showBaseLine){
+            mPath.moveTo(startX,mHeight);
+            mPath.lineTo(startX+totalWidth,mHeight);
+        }
         for(float i=minValue;i<=maxValue;i=i+spacingValue){
             mPath.moveTo(startX+(i-minValue)*perWidth/spacingValue,mHeight);
             if(i%(longSpacingValue)==0){
@@ -212,6 +229,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setMinValue(int minValue) {
         this.minValue = minValue;
+        totalWidth=(maxValue-minValue)*perWidth/spacingValue;
         invalidate();
     }
 
@@ -221,6 +239,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setMaxValue(int maxValue) {
         this.maxValue = maxValue;
+        totalWidth=(maxValue-minValue)*perWidth/spacingValue;
         invalidate();
     }
 
@@ -230,6 +249,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setSpacingValue(float spacingValue) {
         this.spacingValue = spacingValue;
+        totalWidth=(maxValue-minValue)*perWidth/spacingValue;
         invalidate();
     }
 
@@ -239,6 +259,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setPerWidth(float perWidth) {
         this.perWidth = perWidth;
+        totalWidth=(maxValue-minValue)*perWidth/spacingValue;
         invalidate();
     }
 
@@ -248,6 +269,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setShortHeight(float shortHeight) {
         this.shortHeight = shortHeight;
+        initData();
         invalidate();
     }
 
@@ -257,6 +279,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setLongHeight(float longHeight) {
         this.longHeight = longHeight;
+        initData();
         invalidate();
     }
 
@@ -266,6 +289,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setMiddleHeight(float middleHeight) {
         this.middleHeight = middleHeight;
+        initData();
         invalidate();
     }
 
@@ -275,6 +299,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setLineWidth(float lineWidth) {
         this.lineWidth = lineWidth;
+        linePaint.setStrokeWidth(lineWidth);
         invalidate();
     }
 
@@ -284,6 +309,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setMiddleLineWidth(float middleLineWidth) {
         this.middleLineWidth = middleLineWidth;
+        middlePaint.setStrokeWidth(middleLineWidth);
         invalidate();
     }
 
@@ -293,6 +319,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setTextSize(float textSize) {
         this.textSize = textSize;
+        mTextPaint.setTextSize(textSize);
         invalidate();
     }
 
@@ -302,6 +329,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setLineColor( int lineColor) {
         this.lineColor = lineColor;
+        linePaint.setColor(lineColor);
         invalidate();
     }
 
@@ -311,6 +339,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setMiddleLineColor( int middleLineColor) {
         this.middleLineColor = middleLineColor;
+        middlePaint.setColor(middleLineColor);
         invalidate();
     }
 
@@ -320,6 +349,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setTextColor( int textColor) {
         this.textColor = textColor;
+        mTextPaint.setColor(textColor);
         invalidate();
     }
 
@@ -329,6 +359,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setLongSpacingValue(int longSpacingValue) {
         this.longSpacingValue = longSpacingValue;
+        initData();
         invalidate();
     }
 
@@ -338,6 +369,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
     public void setTextMargin(float textMargin) {
         this.textMargin = textMargin;
+        initData();
         invalidate();
     }
 
@@ -401,7 +433,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         return true;
     }
 
-    public void scrollTo(int value){
+    private void scrollTo(int value){
         if(value<minValue||value>maxValue){
             return;
         }
@@ -409,7 +441,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         valueAnimator=null;
         valueAnimator = ValueAnimator.ofFloat(startX, startX-(x-mWidth/2));
         valueAnimator.setInterpolator(new DecelerateInterpolator());
-        valueAnimator.setDuration(500);
+        valueAnimator.setDuration(300);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -423,6 +455,21 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         });
         valueAnimator.start();
     }
+
+    public void scrollToValue(final int value){
+        if(mWidth==0){
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    scrollToValue(value);
+                }
+            },500);
+        }else{
+            scrollTo(value);
+        }
+    }
+
+    private Handler mHandler=new Handler();
 
     public interface OnValueChangedListener{
         void onValueChanged(int value);

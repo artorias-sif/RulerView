@@ -31,5 +31,7 @@
         <attr name="textMargin" format="dimension" />
         <!--长刻度间隔刻度值-->
         <attr name="longSpacingValue" format="integer" />
+        <!--是否显示底线-->
+        <attr name="showBaseLine" format="boolean"/>
     </declare-styleable>
 </resources>
