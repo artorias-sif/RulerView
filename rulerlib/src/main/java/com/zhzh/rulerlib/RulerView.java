@@ -9,12 +9,18 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 
 
 import java.util.Date;
@@ -198,7 +204,9 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mWidth=MeasureSpec.getSize(widthMeasureSpec);
         mHeight=MeasureSpec.getSize(heightMeasureSpec);
-        startX=mWidth/2;
+        if(startX==0){
+            startX=mWidth/2;
+        }
     }
 
     @Override
@@ -467,6 +475,59 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         }else{
             scrollTo(value);
         }
+    }
+
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.startX=startX;
+        return ss;
+    }
+
+    static class SavedState extends BaseSavedState {
+        float startX;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            startX = in.readFloat();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeFloat(startX);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        SavedState savedState=(SavedState)state;
+        super.onRestoreInstanceState(savedState.getSuperState());
+        this.startX=savedState.startX;
+    }
+
+
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        super.dispatchSaveInstanceState(container);
     }
 
     private Handler mHandler=new Handler();
