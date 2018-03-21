@@ -1,4 +1,4 @@
-![](https://img.shields.io/github/release/1169458576/RulerView.svg)
+![](https://img.shields.io/github/release/1169458576/RulerView.svg) ![](https://img.shields.io/hexpm/l/plug.svg)
 
 RulerView
 ===
