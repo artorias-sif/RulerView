@@ -57,7 +57,7 @@ java
         });
     rulerView.scrollToValue(90);
 ```
-## 参数说明
+## 说明
 
 | 参数 | 说明 |
 | :------------ | -------------: |
@@ -77,3 +77,7 @@ java
 | textMargin | 文字与长刻度间距 |
 | longSpacingValue | 长刻度间隔刻度值 |
 | showBaseLine | 是否显示底线 |
+
+| 方法 | 说明 |
+| ---- | ---- |
+| scrollToValue(int value) | 滚动到 value(minValue~maValue之间且能被spacingValue整除) |
