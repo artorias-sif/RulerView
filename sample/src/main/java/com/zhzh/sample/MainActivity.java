@@ -11,14 +11,21 @@ import com.zhzh.rulerlib.RulerView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RulerView rulerView;
     private TextView txt;
+    private RulerView rulerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rulerView=(RulerView) findViewById(R.id.rulerView);
+        rulerView.setOnValueChangedListener(new RulerView.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int value) {
+                txt.setText(String.valueOf(value));
+            }
+        });
+        rulerView.scrollToValue(90);
         txt=(TextView)findViewById(R.id.txt);
         txt.setClickable(true);
         txt.setOnClickListener(new View.OnClickListener() {
@@ -27,13 +34,5 @@ public class MainActivity extends AppCompatActivity {
                 rulerView.scrollToValue((int)(Math.random()*100));
             }
         });
-        rulerView.setOnValueChangedListener(new RulerView.OnValueChangedListener() {
-            @Override
-            public void onValueChanged(int value) {
-                txt.setText(String.valueOf(value));
-            }
-        });
-
-        rulerView.scrollToValue(90);
     }
 }

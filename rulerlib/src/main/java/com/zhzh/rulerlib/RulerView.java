@@ -442,6 +442,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     }
 
     private void scrollTo(int value){
+        Log.d(TAG,"scrollTo " +value);
         if(value<minValue||value>maxValue){
             return;
         }
@@ -482,12 +483,13 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     protected Parcelable onSaveInstanceState() {
         Parcelable superState = super.onSaveInstanceState();
         SavedState ss = new SavedState(superState);
-        ss.startX=startX;
+        ss.currentValue=mCurrentValue;
+        Log.d(TAG,"onSaveInstanceState: mCurrentValue: "+mCurrentValue);
         return ss;
     }
 
     static class SavedState extends BaseSavedState {
-        float startX;
+        int currentValue;
 
         SavedState(Parcelable superState) {
             super(superState);
@@ -495,13 +497,13 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
 
         private SavedState(Parcel in) {
             super(in);
-            startX = in.readFloat();
+            currentValue = in.readInt();
         }
 
         @Override
         public void writeToParcel(Parcel out, int flags) {
             super.writeToParcel(out, flags);
-            out.writeFloat(startX);
+            out.writeInt(currentValue);
         }
 
         public static final Parcelable.Creator<SavedState> CREATOR
@@ -521,7 +523,9 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     protected void onRestoreInstanceState(Parcelable state) {
         SavedState savedState=(SavedState)state;
         super.onRestoreInstanceState(savedState.getSuperState());
-        this.startX=savedState.startX;
+        mCurrentValue= savedState.currentValue;
+        Log.d(TAG,"onRestoreInstanceState: mCurrentValue: "+mCurrentValue);
+        scrollToValue(mCurrentValue);
     }
 
 
