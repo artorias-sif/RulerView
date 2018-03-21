@@ -57,3 +57,23 @@ java
         });
     rulerView.scrollToValue(90);
 ```
+## 参数说明
+
+| 参数 | 说明 |
+| :------------ | -------------: |
+| perWidth | 每个刻度间隔距离 |
+| minValue | 最小值 |
+| maxValue | 最大值 |
+| spacingValue | 每个刻度代表的值 |
+| shortHeight | 短刻度高度 |
+| longHeight | 长刻度高度 |
+| middleHeight | 中线高度 |
+| lineWidth | 刻度线宽 |
+| textSize | 文字大小 |
+| lineColor | 刻度线颜色 |
+| middleLineColor | 中线颜色 |
+| textColor | 文字颜色 |
+| middleLineWidth | 中线宽度 |
+| textMargin | 文字与长刻度间距 |
+| longSpacingValue | 长刻度间隔刻度值 |
+| showBaseLine | 是否显示底线 |
