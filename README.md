@@ -1,5 +1,5 @@
 ![](https://img.shields.io/github/release/1169458576/RulerView.svg)
-![](https://img.shields.io/travis/1169458576/RulerView.svg)
+![](https://img.shields.io/travis/1169458576/RulerView/BRANCH.svg)
 
 RulerView
 ===
