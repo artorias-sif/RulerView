@@ -1,7 +1,7 @@
 RulerView
 ===
   Android自定义刻度尺控件
-![](/img/screenshot.png=500x1000)
+<img width="1000" height="500" src="/img/screenshot.png"/>
 ## 引用
 在根目录下的build.gradle中添加
 ```gradle
