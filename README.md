@@ -60,7 +60,7 @@ java
 ## 说明
 
 | 参数 | 说明 |
-| :------------ | -------------: |
+| ------------ | ------------- |
 | perWidth | 每个刻度间隔距离 |
 | minValue | 最小值 |
 | maxValue | 最大值 |
@@ -80,4 +80,4 @@ java
 
 | 方法 | 说明 |
 | ---- | ---- |
-| scrollToValue(int value) | 滚动到 value(minValue~maValue之间且能被spacingValue整除) |
+| scrollToValue(int value) | 滚动到 value(在minValue~maValue范围内且能被spacingValue整除) |
