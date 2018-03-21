@@ -1,3 +1,5 @@
+![](https://img.shields.io/github/release/1169458576/RulerView.svg)
+
 RulerView
 ===
 Android自定义刻度尺控件</br>
