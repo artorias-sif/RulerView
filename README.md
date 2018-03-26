@@ -63,24 +63,24 @@ java
 ```
 ## 说明
 
-| 参数 | 说明 |
-| :------------: | :-------------: |
-| perWidth | 每个刻度间隔距离 |
-| minValue | 最小值 |
-| maxValue | 最大值 |
-| spacingValue | 每个刻度代表的值 |
-| shortHeight | 短刻度高度 |
-| longHeight | 长刻度高度 |
-| middleHeight | 中线高度 |
-| lineWidth | 刻度线宽 |
-| textSize | 文字大小 |
-| lineColor | 刻度线颜色 |
-| middleLineColor | 中线颜色 |
-| textColor | 文字颜色 |
-| middleLineWidth | 中线宽度 |
-| textMargin | 文字与长刻度间距 |
-| longSpacingValue | 长刻度间隔刻度值 |
-| showBaseLine | 是否显示底线 |
+| 参数 | 说明 | 默认值 |
+| :------------: | :-------------: | :------------: |
+| perWidth | 每个刻度间隔距离 | 5dp |
+| minValue | 最小值 | 0 |
+| maxValue | 最大值 | 100 |
+| spacingValue | 每个刻度代表的值 | 1 |
+| shortHeight | 短刻度高度 | 5dp |
+| longHeight | 长刻度高度 | 10dp |
+| middleHeight | 中线高度 | 15dp |
+| lineWidth | 刻度线宽 | 1dp |
+| textSize | 文字大小 | 12dp |
+| lineColor | 刻度线颜色 | GRAY |
+| middleLineColor | 中线颜色 | RED |
+| textColor | 文字颜色 | GRAY |
+| middleLineWidth | 中线宽度 | 1dp |
+| textMargin | 文字与长刻度间距 | 10dp |
+| longSpacingValue | 长刻度间隔刻度值 | 10 |
+| showBaseLine | 是否显示底线 | 否 |
 
 | 方法 | 说明 |
 | :----: | :----: |
