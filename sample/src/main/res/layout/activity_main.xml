@@ -40,4 +40,16 @@
         app:showBaseLine="false"
         />
 
+    <EditText
+        android:id="@+id/et"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:background="@android:color/black"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center_horizontal"
+        android:textSize="24sp"
+        android:inputType="number"
+        android:text="100"/>
+
 </LinearLayout>
