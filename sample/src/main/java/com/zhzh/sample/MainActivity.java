@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onValueChanged(int value) {
                 txt.setText(String.valueOf(value));
+                et.setText(String.valueOf(value));
             }
         });
         rulerView.scrollToValue(90);
@@ -55,7 +57,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                rulerView.scrollToValue(Integer.valueOf(s.toString()));
+                int num;
+                if(TextUtils.isEmpty(s.toString())){
+                    num=rulerView.getMinValue();
+                }else{
+                    num=Integer.valueOf(s.toString());
+                }
+                rulerView.scrollToValue(num);
             }
         });
     }
