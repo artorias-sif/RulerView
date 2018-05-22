@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int num=(int)(Math.random()*100);
                 rulerView.scrollToValue(num);
-                txt.setText(num);
+                txt.setText(String.valueOf(num));
             }
         });
 
