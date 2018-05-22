@@ -471,6 +471,9 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     }
 
     public void scrollToValue(final int value) {
+        if(value>maxValue||value<minValue){
+            return;
+        }
         if (mWidth == 0) {
             mHandler.postDelayed(new Runnable() {
                 @Override
