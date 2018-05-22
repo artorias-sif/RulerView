@@ -20,7 +20,7 @@ Android自定义刻度尺控件</br>
 ```gradle
    dependencies {
     ...
-    compile 'com.github.1169458576:RulerView:v1.0.2'
+    compile 'com.github.1169458576:RulerView:v1.0.3'
     
     }
 ```
