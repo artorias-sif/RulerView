@@ -216,22 +216,29 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mPath.reset();
+//        mPath.reset();
         if (showBaseLine) {
-            mPath.moveTo(startX, mHeight);
-            mPath.lineTo(startX + totalWidth, mHeight);
+//            mPath.moveTo(startX, mHeight);
+//            mPath.lineTo(startX + totalWidth, mHeight);
+            canvas.drawLine(startX, mHeight,startX + totalWidth, mHeight,linePaint);
         }
         for (float i = minValue; i <= maxValue; i = i + spacingValue) {
-            mPath.moveTo(startX + (i - minValue) * perWidth / spacingValue, mHeight);
+//            mPath.moveTo(startX + (i - minValue) * perWidth / spacingValue, mHeight);
             if (i % (longSpacingValue) == 0) {
-                mPath.lineTo(startX + (i - minValue) * perWidth / spacingValue, mHeight - longHeight);
+//                mPath.lineTo(startX + (i - minValue) * perWidth / spacingValue, mHeight - longHeight);
+                canvas.drawLine(startX + (i - minValue) * perWidth / spacingValue, mHeight,
+                        startX + (i - minValue) * perWidth / spacingValue, mHeight - longHeight,
+                        linePaint);
                 canvas.drawText(String.valueOf((int) i), startX + (i - minValue) * perWidth / spacingValue,
                         mHeight - longHeight - textMargin, mTextPaint);
             } else {
-                mPath.lineTo(startX + (i - minValue) * perWidth / spacingValue, mHeight - shortHeight);
+//                mPath.lineTo(startX + (i - minValue) * perWidth / spacingValue, mHeight - shortHeight);
+                canvas.drawLine(startX + (i - minValue) * perWidth / spacingValue, mHeight,
+                        startX + (i - minValue) * perWidth / spacingValue, mHeight - shortHeight,
+                        linePaint);
             }
         }
-        canvas.drawPath(mPath, linePaint);
+//        canvas.drawPath(mPath, linePaint);
         canvas.drawLine(mWidth / 2, mHeight, mWidth / 2, mHeight - middleHeight, middlePaint);
     }
 
