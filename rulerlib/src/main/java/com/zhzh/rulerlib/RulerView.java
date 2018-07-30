@@ -18,13 +18,14 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 
 import java.util.Date;
 
-public class RulerView extends View implements GestureDetector.OnGestureListener {
+public class RulerView extends SurfaceView implements GestureDetector.OnGestureListener {
 
     private final static String TAG = "RulerView";
 
@@ -166,6 +167,7 @@ public class RulerView extends View implements GestureDetector.OnGestureListener
         middlePaint.setStrokeWidth(middleLineWidth);
         mTextPaint.setTextSize(textSize);
         mTextPaint.setColor(textColor);
+        setBackgroundColor(Color.parseColor("#ffffff"));
     }
 
     @Override
