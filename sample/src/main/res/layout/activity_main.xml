@@ -25,7 +25,7 @@
         android:layout_marginLeft="16dp"
         app:perWidth="10dp"
         app:minValue="0"
-        app:maxValue="100000"
+        app:maxValue="1000000"
         app:spacingValue="100"
         app:longSpacingValue="1000"
         app:shortHeight="10dp"

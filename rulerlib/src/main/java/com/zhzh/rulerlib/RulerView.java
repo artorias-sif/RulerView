@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -25,9 +28,11 @@ import android.view.animation.DecelerateInterpolator;
 
 import java.util.Date;
 
-public class RulerView extends SurfaceView implements GestureDetector.OnGestureListener {
+public class RulerView extends SurfaceView implements GestureDetector.OnGestureListener,SurfaceHolder.Callback, Runnable {
 
     private final static String TAG = "RulerView";
+    private final SurfaceHolder mSurfaceHolder;
+    private final Paint bgPaint;
 
     private long downTime;
 
@@ -81,6 +86,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
 
     //是否显示底线
     private boolean showBaseLine;
+    private boolean mIsDrawing;
 
     public boolean isShowBaseLine() {
         return showBaseLine;
@@ -88,7 +94,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
 
     public void setShowBaseLine(boolean showBaseLine) {
         this.showBaseLine = showBaseLine;
-        invalidate();
+        //invalidate();
     }
 
     //值变化监听
@@ -147,13 +153,20 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
         mTextPaint = new TextPaint();
         middlePaint = new Paint();
         linePaint = new Paint();
+        bgPaint=new Paint();
         mPath = new Path();
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setAntiAlias(true);
+        bgPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        bgPaint.setAntiAlias(true);
+        bgPaint.setColor(Color.WHITE);
         middlePaint.setAntiAlias(true);
         middlePaint.setStyle(Paint.Style.STROKE);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
+        mSurfaceHolder=getHolder();
+        mSurfaceHolder.addCallback(this);
+        mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
         initData();
         a.recycle();
     }
@@ -167,8 +180,39 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
         middlePaint.setStrokeWidth(middleLineWidth);
         mTextPaint.setTextSize(textSize);
         mTextPaint.setColor(textColor);
-        setBackgroundColor(Color.parseColor("#ffffff"));
     }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        mIsDrawing = true;
+        new Thread(this).start();
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder,
+                               int format, int width, int height) {
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        mIsDrawing = false;
+    }
+
+    @Override
+    public void run() {
+        while (mIsDrawing) {
+            draw();
+        }
+    }
+    //绘图操作
+    private synchronized void draw() {
+            Canvas canvas =null;
+            canvas = mSurfaceHolder.lockCanvas();
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            drawAll(canvas);
+            mSurfaceHolder.unlockCanvasAndPost(canvas);
+    }
+
 
     @Override
     public boolean performClick() {
@@ -216,42 +260,40 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
-//        mPath.reset();
-        if (showBaseLine) {
-//            mPath.moveTo(startX, mHeight);
-//            mPath.lineTo(startX + totalWidth, mHeight);
-            canvas.drawLine(startX, mHeight,startX + totalWidth, mHeight,linePaint);
-        }
-        for (float i = minValue; i <= maxValue; i = i + spacingValue) {
-//            mPath.moveTo(startX + (i - minValue) * perWidth / spacingValue, mHeight);
-            if (i % (longSpacingValue) == 0) {
-//                mPath.lineTo(startX + (i - minValue) * perWidth / spacingValue, mHeight - longHeight);
-                canvas.drawLine(startX + (i - minValue) * perWidth / spacingValue, mHeight,
-                        startX + (i - minValue) * perWidth / spacingValue, mHeight - longHeight,
-                        linePaint);
-                canvas.drawText(String.valueOf((int) i), startX + (i - minValue) * perWidth / spacingValue,
-                        mHeight - longHeight - textMargin, mTextPaint);
-            } else {
-//                mPath.lineTo(startX + (i - minValue) * perWidth / spacingValue, mHeight - shortHeight);
-                canvas.drawLine(startX + (i - minValue) * perWidth / spacingValue, mHeight,
-                        startX + (i - minValue) * perWidth / spacingValue, mHeight - shortHeight,
-                        linePaint);
-            }
-        }
-//        canvas.drawPath(mPath, linePaint);
-        canvas.drawLine(mWidth / 2, mHeight, mWidth / 2, mHeight - middleHeight, middlePaint);
+//        drawAll(canvas);
     }
 
     public int getMinValue() {
         return minValue;
     }
 
+    private synchronized void drawAll(Canvas canvas){
+        canvas.drawRect(0,0,mWidth,mHeight,bgPaint);
+        if (showBaseLine) {
+            canvas.drawLine(startX, mHeight,startX + totalWidth, mHeight,linePaint);
+        }
+        for (float i = minValue; i <= maxValue; i = i + spacingValue) {
+            if (i % (longSpacingValue) == 0) {
+                canvas.drawLine(startX + (i - minValue) * perWidth / spacingValue, mHeight,
+                        startX + (i - minValue) * perWidth / spacingValue, mHeight - longHeight,
+                        linePaint);
+                canvas.drawText(String.valueOf((int) i), startX + (i - minValue) * perWidth / spacingValue,
+                        mHeight - longHeight - textMargin, mTextPaint);
+            } else {
+                canvas.drawLine(startX + (i - minValue) * perWidth / spacingValue, mHeight,
+                        startX + (i - minValue) * perWidth / spacingValue, mHeight - shortHeight,
+                        linePaint);
+            }
+        }
+        canvas.drawLine(mWidth / 2, mHeight, mWidth / 2, mHeight - middleHeight, middlePaint);
+    }
+
     public void setMinValue(int minValue) {
         this.minValue = minValue;
         totalWidth = (maxValue - minValue) * perWidth / spacingValue;
-        invalidate();
+        ////invalidate();
     }
 
     public int getMaxValue() {
@@ -261,7 +303,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setMaxValue(int maxValue) {
         this.maxValue = maxValue;
         totalWidth = (maxValue - minValue) * perWidth / spacingValue;
-        invalidate();
+        ////invalidate();
     }
 
     public float getSpacingValue() {
@@ -271,7 +313,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setSpacingValue(float spacingValue) {
         this.spacingValue = spacingValue;
         totalWidth = (maxValue - minValue) * perWidth / spacingValue;
-        invalidate();
+        //invalidate();
     }
 
     public float getPerWidth() {
@@ -281,7 +323,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setPerWidth(float perWidth) {
         this.perWidth = perWidth;
         totalWidth = (maxValue - minValue) * perWidth / spacingValue;
-        invalidate();
+        //invalidate();
     }
 
     public float getShortHeight() {
@@ -291,7 +333,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setShortHeight(float shortHeight) {
         this.shortHeight = shortHeight;
         initData();
-        invalidate();
+        //invalidate();
     }
 
     public float getLongHeight() {
@@ -301,7 +343,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setLongHeight(float longHeight) {
         this.longHeight = longHeight;
         initData();
-        invalidate();
+        //invalidate();
     }
 
     public float getMiddleHeight() {
@@ -311,7 +353,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setMiddleHeight(float middleHeight) {
         this.middleHeight = middleHeight;
         initData();
-        invalidate();
+        //invalidate();
     }
 
     public float getLineWidth() {
@@ -321,7 +363,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setLineWidth(float lineWidth) {
         this.lineWidth = lineWidth;
         linePaint.setStrokeWidth(lineWidth);
-        invalidate();
+        //invalidate();
     }
 
     public float getMiddleLineWidth() {
@@ -331,7 +373,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setMiddleLineWidth(float middleLineWidth) {
         this.middleLineWidth = middleLineWidth;
         middlePaint.setStrokeWidth(middleLineWidth);
-        invalidate();
+        //invalidate();
     }
 
     public float getTextSize() {
@@ -341,7 +383,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setTextSize(float textSize) {
         this.textSize = textSize;
         mTextPaint.setTextSize(textSize);
-        invalidate();
+        //invalidate();
     }
 
     public int getLineColor() {
@@ -351,7 +393,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setLineColor(int lineColor) {
         this.lineColor = lineColor;
         linePaint.setColor(lineColor);
-        invalidate();
+        //invalidate();
     }
 
     public int getMiddleLineColor() {
@@ -361,7 +403,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setMiddleLineColor(int middleLineColor) {
         this.middleLineColor = middleLineColor;
         middlePaint.setColor(middleLineColor);
-        invalidate();
+        //invalidate();
     }
 
     public int getTextColor() {
@@ -371,7 +413,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setTextColor(int textColor) {
         this.textColor = textColor;
         mTextPaint.setColor(textColor);
-        invalidate();
+        //invalidate();
     }
 
     public int getLongSpacingValue() {
@@ -381,7 +423,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setLongSpacingValue(int longSpacingValue) {
         this.longSpacingValue = longSpacingValue;
         initData();
-        invalidate();
+        //invalidate();
     }
 
     public float getTextMargin() {
@@ -391,7 +433,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
     public void setTextMargin(float textMargin) {
         this.textMargin = textMargin;
         initData();
-        invalidate();
+        //invalidate();
     }
 
     @Override
@@ -429,7 +471,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
         if (mOnValueChangedListener != null) {
             mOnValueChangedListener.onValueChanged(mCurrentValue);
         }
-        invalidate();
+        //invalidate();
         return true;
     }
 
@@ -473,7 +515,7 @@ public class RulerView extends SurfaceView implements GestureDetector.OnGestureL
                         mOnValueChangedListener.onValueChanged(mCurrentValue);
                     }
                 }
-                invalidate();
+                //invalidate();
             }
         });
         valueAnimator.start();
